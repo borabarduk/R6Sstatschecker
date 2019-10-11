@@ -7,6 +7,11 @@ class Screenshotchecker(object):
 
         self._url = config['DATA']['Url']
 
+    #Todo Take image input
+    #Todo Crop and image
+    #Todo Detect list of players using OCR
+    #Todo open in browser or find another solution
+
 if __name__ == "__main__":
 
     try:
