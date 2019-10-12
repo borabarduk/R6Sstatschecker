@@ -3,6 +3,8 @@ import webbrowser
 from configparser import ConfigParser
 from PIL import Image,ImageOps
 from pytesseract import image_to_string
+import requests
+from bs4 import BeautifulSoup
 
 class Screenshotchecker(object):
 
@@ -44,6 +46,26 @@ class Screenshotchecker(object):
         for name in names:
             webbrowser.open(self._url.format(name), autoraise=True)
 
+    def printSummaryView(self,names):
+
+        for name in names:
+            try:
+                res = requests.get(self._url.format(name))
+                html_page = res.content
+                soup = BeautifulSoup(html_page)
+                stats = soup.findAll("div", {"class": "trn-defstat__value"})
+                level = stats[0].text.replace('\n','').strip()
+                wins = stats[5].text.replace('\n','').strip()
+                wlratio = stats[6].text.replace('\n','').strip()
+                kdratio = stats[8].text.replace('\n','').strip()
+                topops = ','.join( [x['title'] for x in stats[4].findAll()])
+                time = stats[21].text.replace('\n','').strip()
+                statStr = "Player Name:{}\nLVL:{} WINS:{} WL:{} KD:{} TOP:{} TIME: {}\n-------------\n"
+                print(statStr.format(name,level,wins,wlratio,kdratio,topops,time))
+            except:
+                print( (name, '?') [name == '']  + ' not found\n')
+
+
 
 if __name__ == "__main__":
 
@@ -56,8 +78,10 @@ if __name__ == "__main__":
         checker  = Screenshotchecker(config)
         processedIMG = checker.preprocess()
         names = checker.extractPlayers(processedIMG)
-        checker.openBrowserTabs(names)
 
+        # checker.openBrowserTabs(names)
+        checker.printSummaryView(names)
+        print("Completed successfully")
 
     except:
         traceback.print_exc()
