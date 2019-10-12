@@ -2,7 +2,9 @@ import traceback
 import webbrowser
 from configparser import ConfigParser
 from PIL import Image,ImageOps
-from pytesseract import image_to_string
+from pytesseract import image_to_string, pytesseract
+#If running on windows
+pytesseract.tesseract_cmd = """C:/Program Files/Tesseract-OCR/tesseract.exe"""
 import requests
 from bs4 import BeautifulSoup
 
